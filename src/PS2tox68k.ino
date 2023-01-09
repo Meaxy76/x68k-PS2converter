@@ -1,15 +1,26 @@
+/******************************************
+ * Meaxy Kusama
+ * PS/2 to x68000 converter
+ * MDL
+ *****************************************/
+
+
+#include "PS2Mouse.h"
 #include "PS2Keyboard.h"
 
-const int DataPin = 8;
-const int IRQpin =  3;
+#define DATA_PIN 7
+#define CLOCK_PIN 2
+#define DataPin 8
+#define IRQpin 3
 
 PS2Keyboard keyboard;
+PS2Mouse mouse(CLOCK_PIN, DATA_PIN);
 
 void setup() {
   delay(1000);
   keyboard.begin(DataPin, IRQpin);
   Serial.begin(9600);
-  Serial.println("Keyboard Test:");
+  Serial.println("Mouse & Keyboard test:");
 }
 
 void loop() {
@@ -40,9 +51,21 @@ void loop() {
     } else if (c == PS2_DELETE) {
       Serial.print("[Del]");
     } else {
-      
       // otherwise, just print all normal characters
       Serial.print(c);
     }
+	
+	
   }
+  
+  MouseData data = mouse.readData();
+  
+  Serial.print(data.status);
+  Serial.print("\tPX:");
+  Serial.print(data.position.x);
+  Serial.print("\tPY:");
+  Serial.print(data.position.y);
+  Serial.println();
+  delay(20);
+  
 }
